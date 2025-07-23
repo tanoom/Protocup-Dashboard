@@ -154,7 +154,7 @@ class RobotStatusFrame(ModernFrame):
         role_text = f"{robot_data.role}"
         role_color = COLORS['text_primary']
         if robot_data.has_possession:
-            role_text += " 🏀"
+            role_text += " [BALL]"
             role_color = COLORS['warning']
         self.info_values['role'].config(text=role_text, fg=role_color)
         
@@ -415,7 +415,7 @@ class ControlPanel(ModernFrame):
         emergency_frame = ModernFrame(self, bg_color=COLORS['danger'])
         emergency_frame.pack(fill=tk.X, padx=8, pady=4)
         
-        emergency_btn = ModernButton(emergency_frame, text="🚨 EMERGENCY STOP", 
+        emergency_btn = ModernButton(emergency_frame, text="EMERGENCY STOP", 
                                    command=self.send_emergency_stop, style='danger')
         emergency_btn.pack(fill=tk.X, padx=4, pady=4)
         
@@ -550,7 +550,7 @@ class RoboCupDashboard:
         title_frame = ModernFrame(self.root, bg_color=COLORS['bg_secondary'])
         title_frame.pack(fill=tk.X, padx=0, pady=0)
         
-        title_label = tk.Label(title_frame, text="🤖 RoboCup Humanoid Dashboard", 
+        title_label = tk.Label(title_frame, text="RoboCup Humanoid Dashboard", 
                               font=FONTS['title'], fg=COLORS['text_primary'],
                               bg=COLORS['bg_secondary'])
         title_label.pack(pady=12)
@@ -605,7 +605,7 @@ class RoboCupDashboard:
         right_panel = ModernFrame(main_paned, bg_color=COLORS['bg_secondary'])
         main_paned.add(right_panel, minsize=600)
         
-        field_title = tk.Label(right_panel, text="⚽ Field View", font=FONTS['heading'],
+        field_title = tk.Label(right_panel, text="Field View", font=FONTS['heading'],
                               fg=COLORS['text_primary'], bg=COLORS['bg_secondary'])
         field_title.pack(pady=(12, 8))
         
@@ -620,7 +620,7 @@ class RoboCupDashboard:
         status_frame = ModernFrame(self.root, bg_color=COLORS['bg_secondary'])
         status_frame.pack(side=tk.BOTTOM, fill=tk.X)
         
-        self.status_bar = tk.Label(status_frame, text="🚀 Dashboard starting...", 
+        self.status_bar = tk.Label(status_frame, text="Dashboard starting...", 
                                   font=FONTS['caption'], fg=COLORS['text_secondary'],
                                   bg=COLORS['bg_secondary'], anchor=tk.W)
         self.status_bar.pack(side=tk.LEFT, padx=8, pady=4)
@@ -633,7 +633,7 @@ class RoboCupDashboard:
     def start_dashboard(self):
         """Start the dashboard"""
         self.dashboard_core.start()
-        self.status_bar.config(text="✅ Dashboard running - Waiting for robots...")
+        self.status_bar.config(text="Dashboard running - Waiting for robots...")
         self.update_gui()
         
     def update_gui(self):
