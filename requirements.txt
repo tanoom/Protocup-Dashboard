@@ -1,5 +1,6 @@
 matplotlib>=3.5.0
 numpy>=1.21.0
+sv-ttk>=2.6.1
 
 # Core dashboard dependencies
 # Note: tkinter is included with Python, no installation needed
