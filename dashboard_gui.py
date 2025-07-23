@@ -354,7 +354,7 @@ class ModernFieldCanvas(tk.Canvas):
 
 class ModernButton(tk.Button):
     """Modern styled button"""
-    def __init__(self, parent, text, command=None, style='primary', **kwargs):
+    def __init__(self, parent, text, command=None, style='primary', width=None, height=None, **kwargs):
         styles = {
             'primary': {'bg': COLORS['accent'], 'fg': COLORS['button_text'], 'activebackground': COLORS['accent_light']},
             'success': {'bg': COLORS['success'], 'fg': COLORS['button_text'], 'activebackground': '#52c993'},
@@ -364,9 +364,18 @@ class ModernButton(tk.Button):
         
         style_config = styles.get(style, styles['primary'])
         
+        # Add size parameters if provided
+        if width is not None:
+            style_config['width'] = width
+        if height is not None:
+            style_config['height'] = height
+        
         super().__init__(parent, text=text, command=command,
                         font=FONTS['body'], relief='flat', bd=0,
                         cursor='hand2', **style_config, **kwargs)
+        
+        # Force modern styling after creation (fixes sizing conflicts)
+        self.configure(relief='flat', bd=0, highlightthickness=0)
 
 
 class ControlPanel(ModernFrame):
@@ -386,7 +395,7 @@ class ControlPanel(ModernFrame):
         
         # Robot selection with modern styling
         select_frame = ModernFrame(self, bg_color=COLORS['bg_secondary'])
-        select_frame.pack(fill=tk.X, padx=8, pady=(0, 12))
+        select_frame.pack(fill=tk.X, padx=8, pady=(0, 16))
         
         tk.Label(select_frame, text="Target Robot:", font=FONTS['body'],
                 fg=COLORS['text_secondary'], bg=COLORS['bg_secondary']).pack(side=tk.LEFT, padx=8, pady=8)
@@ -395,7 +404,7 @@ class ControlPanel(ModernFrame):
         
         self.robot_combo = ttk.Combobox(select_frame, textvariable=self.robot_var, 
                                        values=["All Robots"], state="readonly")
-        self.robot_combo.pack(side=tk.LEFT, padx=8, pady=8, fill=tk.X, expand=True)
+        self.robot_combo.pack(side=tk.LEFT, padx=8, pady=2, fill=tk.X, expand=True)
         
         # Command buttons with modern styling
         button_frame = ModernFrame(self)
@@ -409,7 +418,7 @@ class ControlPanel(ModernFrame):
         
         for text, command, style in buttons:
             btn = ModernButton(button_frame, text=text, command=command, style=style)
-            btn.pack(side=tk.LEFT, padx=2, pady=4, fill=tk.X, expand=True)
+            btn.pack(side=tk.LEFT, padx=8, pady=4, fill=tk.X, expand=True)
         
         # Emergency stop - separate and prominent
         emergency_frame = ModernFrame(self, bg_color=COLORS['danger'])
