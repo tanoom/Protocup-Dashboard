@@ -76,7 +76,7 @@ class RobotStatusFrame(ModernFrame):
     def setup_widgets(self):
         """Setup modern robot status display"""
         # Set fixed width for the entire frame
-        self.configure(padx=8, pady=8, width=420, height=250)
+        self.configure(padx=8, pady=8, width=420, height=320)
         self.pack_propagate(False)  # Prevent the frame from shrinking to fit content
         
         # Header section
@@ -101,10 +101,13 @@ class RobotStatusFrame(ModernFrame):
         info_items = [
             ('Game State', 'game_state', 'UNKNOWN'),
             ('Position', 'position', '(0.0, 0.0)'),
-            ('Role', 'role', 'unknown'),
-            ('Ball', 'ball', 'Not detected'),
-            ('Loop Time', 'performance', '0.0ms'),
-            ('Decision', 'decision', 'unknown')
+            ('Static Role', 'role', 'unknown'),
+            ('Dynamic Role', 'dynamic_role', 'unknown'),
+            ('Ball Status', 'ball', 'Not detected'),
+            ('Possession', 'possession', 'No'),
+            ('Ball Cost', 'ball_cost', '0.0'),
+            ('Decision', 'decision', 'unknown'),
+            ('Loop Time', 'performance', '0.0ms')
         ]
         
         for i, (label_text, key, default_value) in enumerate(info_items):
@@ -150,13 +153,16 @@ class RobotStatusFrame(ModernFrame):
         # Update position
         self.info_values['position'].config(text=f"({robot_data.pose_x:.1f}, {robot_data.pose_y:.1f})")
         
-        # Update role with possession indicator
-        role_text = f"{robot_data.role}"
-        role_color = COLORS['text_primary']
-        if robot_data.has_possession:
-            role_text += " [BALL]"
-            role_color = COLORS['warning']
-        self.info_values['role'].config(text=role_text, fg=role_color)
+        # Update static role
+        self.info_values['role'].config(text=robot_data.role)
+        
+        # Update dynamic role with color coding
+        dynamic_role_text = f"{robot_data.dynamic_role}"
+        dynamic_role_color = COLORS['text_primary']
+        if robot_data.dynamic_role == -1:
+            dynamic_role_text = "unassigned"
+            dynamic_role_color = COLORS['text_muted']
+        self.info_values['dynamic_role'].config(text=dynamic_role_text, fg=dynamic_role_color)
         
         # Update ball detection with colors
         if robot_data.ball_detected:
@@ -166,6 +172,28 @@ class RobotStatusFrame(ModernFrame):
             ball_text = "Not detected"
             ball_color = COLORS['text_muted']
         self.info_values['ball'].config(text=ball_text, fg=ball_color)
+        
+        # Update possession status with detailed info
+        if robot_data.has_possession:
+            possession_text = "Yes (This Robot)"
+            possession_color = COLORS['warning']
+        elif robot_data.possession_player != -1:
+            possession_text = f"Robot {robot_data.possession_player}"
+            possession_color = COLORS['text_secondary']
+        else:
+            possession_text = "Unknown"
+            possession_color = COLORS['text_muted']
+        self.info_values['possession'].config(text=possession_text, fg=possession_color)
+        
+        # Update ball cost with color coding
+        ball_cost_color = COLORS['text_primary']
+        if robot_data.ball_cost < 0.5:
+            ball_cost_color = COLORS['success']  # Low cost (close to ball)
+        elif robot_data.ball_cost < 1.0:
+            ball_cost_color = COLORS['warning']  # Medium cost
+        else:
+            ball_cost_color = COLORS['danger']   # High cost (far from ball)
+        self.info_values['ball_cost'].config(text=f"{robot_data.ball_cost:.2f}", fg=ball_cost_color)
             
         # Update performance with color coding
         loop_time_ms = robot_data.avg_loop_time * 1000

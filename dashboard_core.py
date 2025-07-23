@@ -139,10 +139,18 @@ class DashboardCore:
                 
                 # Parse JSON data
                 try:
-                    robot_data_json = json.loads(data.decode('utf-8'))
+                    raw_data = data.decode('utf-8')
+                    robot_data_json = json.loads(raw_data)
                     self._process_robot_data(robot_data_json, addr)
                 except json.JSONDecodeError as e:
                     print(f"Invalid JSON from {addr}: {e}")
+                    # Debug: Show the problematic JSON around the error location
+                    raw_data = data.decode('utf-8', errors='replace')
+                    error_pos = getattr(e, 'pos', 0)
+                    start = max(0, error_pos - 50)
+                    end = min(len(raw_data), error_pos + 50)
+                    print(f"JSON context around error: '{raw_data[start:end]}'")
+                    print(f"Full JSON (first 500 chars): '{raw_data[:500]}'")
                 except Exception as e:
                     print(f"Error processing data from {addr}: {e}")
                     
