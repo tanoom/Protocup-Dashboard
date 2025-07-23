@@ -463,41 +463,55 @@ class GameStatePanel(ModernFrame):
         
     def setup_widgets(self):
         """Setup modern game state display"""
-        # Title
-        title = tk.Label(self, text="Game State", font=FONTS['heading'], 
-                        fg=COLORS['text_primary'], bg=COLORS['bg_tertiary'])
-        title.pack(pady=(8, 12))
+        # Title with better styling
+        title_frame = ModernFrame(self, bg_color=COLORS['bg_secondary'])
+        title_frame.pack(fill=tk.X, padx=8, pady=(8, 4))
         
-        # Info grid with modern cards
+        title = tk.Label(title_frame, text="Game State", font=FONTS['heading'], 
+                        fg=COLORS['text_primary'], bg=COLORS['bg_secondary'])
+        title.pack(pady=8)
+        
+        # Info grid with modern cards and better spacing
         self.info_frame = ModernFrame(self, bg_color=COLORS['bg_secondary'])
-        self.info_frame.pack(fill=tk.X, padx=8, pady=(0, 8))
+        self.info_frame.pack(fill=tk.X, padx=8, pady=(4, 8))
         
-        # Create info items as modern cards
+        # Create info items as modern cards with borders
         self.info_items = {}
         items = [
-            ('State', 'state', 'UNKNOWN'),
-            ('Score', 'score', '0'),
-            ('Connected', 'connected', '0/3'),
-            ('Ball Possession', 'possession', 'None')
+            ('State', 'state', 'UNKNOWN', '🎮'),
+            ('Score', 'score', '0', '⚽'),
+            ('Connected', 'connected', '0/3', '📡'),
+            ('Ball Possession', 'possession', 'None', '🏃‍♂️')
         ]
         
-        for i, (label_text, key, default_value) in enumerate(items):
+        for i, (label_text, key, default_value, icon) in enumerate(items):
+            # Create card with border and shadow effect
             item_frame = ModernFrame(self.info_frame, bg_color=COLORS['bg_tertiary'])
-            item_frame.grid(row=i//2, column=i%2, padx=4, pady=4, sticky='ew')
+            item_frame.configure(relief='solid', bd=1, highlightbackground=COLORS['border'])
+            item_frame.grid(row=i//2, column=i%2, padx=8, pady=6, sticky='ew', ipadx=4, ipady=4)
             
-            label = tk.Label(item_frame, text=label_text, font=FONTS['caption'],
+            # Header with icon and label
+            header_frame = tk.Frame(item_frame, bg=COLORS['bg_tertiary'])
+            header_frame.pack(fill=tk.X, padx=8, pady=(8, 4))
+            
+            icon_label = tk.Label(header_frame, text=icon, font=('Segoe UI', 12),
+                                bg=COLORS['bg_tertiary'])
+            icon_label.pack(side=tk.LEFT)
+            
+            label = tk.Label(header_frame, text=label_text, font=FONTS['caption'],
                            fg=COLORS['text_secondary'], bg=COLORS['bg_tertiary'])
-            label.pack(anchor='w', padx=6, pady=(6, 2))
+            label.pack(side=tk.LEFT, padx=(4, 0))
             
+            # Value with better typography
             value = tk.Label(item_frame, text=default_value, font=FONTS['subheading'],
                            fg=COLORS['text_primary'], bg=COLORS['bg_tertiary'])
-            value.pack(anchor='w', padx=6, pady=(0, 6))
+            value.pack(anchor='w', padx=8, pady=(0, 8))
             
             self.info_items[key] = value
         
-        # Configure grid
-        self.info_frame.grid_columnconfigure(0, weight=1)
-        self.info_frame.grid_columnconfigure(1, weight=1)
+        # Configure grid with better spacing
+        self.info_frame.grid_columnconfigure(0, weight=1, minsize=150)
+        self.info_frame.grid_columnconfigure(1, weight=1, minsize=150)
         
     def update_game_state(self, robots: Dict[int, RobotData]):
         """Update game state with colors"""
